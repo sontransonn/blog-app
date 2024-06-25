@@ -13,6 +13,7 @@ const userSlice = createSlice({
         },
         resetUserInfo(state, action) {
             state.userInfo = null;
+            localStorage.removeItem("account")
         },
     },
 });

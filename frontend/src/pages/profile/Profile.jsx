@@ -1,70 +1,90 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from 'react-router-dom'
-import { useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
+import {
+    useMutation,
+    useQuery,
+    useQueryClient
+} from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 
 import { setUserInfo } from '../../redux/slices/userSlice';
 
-import MainLayout from '../../layouts/MainLayout'
+import MainLayout from "../../layouts/MainLayout"
+import ProfilePicture from './profilePicture/ProfilePicture';
 
-import { registerUser } from '../../apis/userApi';
+import { getUserProfile } from '../../apis/userApi';
+import { updateProfile } from '../../apis/userApi';
 
-const Register = () => {
+const Profile = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const queryClient = useQueryClient();
     const userState = useSelector((state) => state.user);
+
+    const { data: profileData, isLoading: profileIsLoading } = useQuery({
+        queryFn: () => {
+            return getUserProfile({ token: userState.userInfo.token });
+        },
+        queryKey: ["profile"],
+    });
 
     const {
         register,
         handleSubmit,
         formState: { errors, isValid },
-        watch,
     } = useForm({
         defaultValues: {
             name: "",
             email: "",
             password: "",
-            confirmPassword: "",
         },
+        values: useMemo(() => {
+            return {
+                name: profileIsLoading ? "" : profileData.name,
+                email: profileIsLoading ? "" : profileData.email,
+            };
+        }, [profileData?.email, profileData?.name, profileIsLoading]),
         mode: "onChange",
     });
 
-    const password = watch("password");
-
-    useEffect(() => {
-        if (userState.userInfo) {
-            navigate("/");
-        }
-    }, [navigate, userState.userInfo]);
-
-    const { mutate, isLoading } = useMutation({
+    const { mutate, isLoading: updateProfileIsLoading } = useMutation({
         mutationFn: ({ name, email, password }) => {
-            return registerUser({ name, email, password })
+            return updateProfile({
+                token: userState.userInfo.token,
+                userData: { name, email, password },
+                userId: userState.userInfo._id,
+            });
         },
         onSuccess: (data) => {
             dispatch(setUserInfo(data));
             localStorage.setItem("account", JSON.stringify(data));
+            queryClient.invalidateQueries(["profile"]);
+            toast.success("Profile is updated");
         },
         onError: (error) => {
             toast.error(error.message);
             console.log(error);
-        },
+        }
     })
+
+    useEffect(() => {
+        if (!userState.userInfo) {
+            navigate("/");
+        }
+    }, [navigate, userState.userInfo]);
 
     const submitHandler = (data) => {
         const { name, email, password } = data;
         mutate({ name, email, password });
-    }
+    };
 
     return (
         <MainLayout>
             <section className="container mx-auto px-5 py-10">
                 <div className="w-full max-w-sm mx-auto">
-                    <h1 className="font-roboto text-2xl font-bold text-center text-dark-hard mb-8">
-                        Sign Up
-                    </h1>
+                    <ProfilePicture avatar={profileData?.avatar} />
                     <form onSubmit={handleSubmit(submitHandler)}>
                         <div className="flex flex-col mb-6 w-full">
                             <label
@@ -73,6 +93,7 @@ const Register = () => {
                             >
                                 Name
                             </label>
+
                             <input
                                 type="text"
                                 id="name"
@@ -87,8 +108,8 @@ const Register = () => {
                                     },
                                 })}
                                 placeholder="Enter name"
-                                className={`placeholder:text-[#959ead] text-dark-hard mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border ${errors.name ? "border-red-500" : "border-[#c3cad9]"
-                                    }`}
+                                className={`placeholder:text-[#959ead] text-dark-hard mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border 
+                                    ${errors.name ? "border-red-500" : "border-[#c3cad9]"}`}
                             />
                             {errors.name?.message && (
                                 <p className="text-red-500 text-xs mt-1">
@@ -96,6 +117,7 @@ const Register = () => {
                                 </p>
                             )}
                         </div>
+
                         <div className="flex flex-col mb-6 w-full">
                             <label
                                 htmlFor="email"
@@ -103,6 +125,7 @@ const Register = () => {
                             >
                                 Email
                             </label>
+
                             <input
                                 type="email"
                                 id="email"
@@ -127,27 +150,20 @@ const Register = () => {
                                 </p>
                             )}
                         </div>
+
                         <div className="flex flex-col mb-6 w-full">
                             <label
                                 htmlFor="password"
                                 className="text-[#5a7184] font-semibold block"
                             >
-                                Password
+                                Mật khẩu mới (tùy chọn)
                             </label>
+
                             <input
                                 type="password"
                                 id="password"
-                                {...register("password", {
-                                    required: {
-                                        value: true,
-                                        message: "Password is required",
-                                    },
-                                    minLength: {
-                                        value: 6,
-                                        message: "Password length must be at least 6 characters",
-                                    },
-                                })}
-                                placeholder="Enter password"
+                                {...register("password")}
+                                placeholder="Enter new password"
                                 className={`placeholder:text-[#959ead] text-dark-hard mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border ${errors.password ? "border-red-500" : "border-[#c3cad9]"
                                     }`}
                             />
@@ -157,50 +173,14 @@ const Register = () => {
                                 </p>
                             )}
                         </div>
-                        <div className="flex flex-col mb-6 w-full">
-                            <label
-                                htmlFor="confirmPassword"
-                                className="text-[#5a7184] font-semibold block"
-                            >
-                                Confirm Password
-                            </label>
-                            <input
-                                type="password"
-                                id="confirmPassword"
-                                {...register("confirmPassword", {
-                                    required: {
-                                        value: true,
-                                        message: "Confirm password is required",
-                                    },
-                                    validate: (value) => {
-                                        if (value !== password) {
-                                            return "Passwords do not match";
-                                        }
-                                    },
-                                })}
-                                placeholder="Enter confirm password"
-                                className={`placeholder:text-[#959ead] text-dark-hard mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border ${errors.confirmPassword ? "border-red-500" : "border-[#c3cad9]"
-                                    }`}
-                            />
-                            {errors.confirmPassword?.message && (
-                                <p className="text-red-500 text-xs mt-1">
-                                    {errors.confirmPassword?.message}
-                                </p>
-                            )}
-                        </div>
+
                         <button
                             type="submit"
-                            disabled={!isValid || isLoading}
+                            disabled={!isValid || profileIsLoading || updateProfileIsLoading}
                             className="bg-primary text-white font-bold text-lg py-4 px-8 w-full rounded-lg mb-6 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                            Register
+                            Cập nhật
                         </button>
-                        <p className="text-sm font-semibold text-[#5a7184]">
-                            You have an account?{" "}
-                            <Link to="/login" className="text-primary">
-                                Login now
-                            </Link>
-                        </p>
                     </form>
                 </div>
             </section>
@@ -208,4 +188,4 @@ const Register = () => {
     )
 }
 
-export default Register
+export default Profile

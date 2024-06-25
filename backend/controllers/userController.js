@@ -135,7 +135,10 @@ export const updateProfile = async (req, res, next) => {
         if (req.body.password && req.body.password.length < 6) {
             throw new Error("Password length must be at least 6 character");
         } else if (req.body.password) {
-            user.password = req.body.password;
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+            user.password = hashedPassword;
         }
 
         const updatedUserProfile = await user.save();
