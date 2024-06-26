@@ -24,15 +24,15 @@ const postSchema = new mongoose.Schema(
             required: false
         },
         user: {
-            type: Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         },
         tags: {
             type: [String]
         },
         categories: [{
-            type: Schema.Types.ObjectId,
-            ref: "Category"
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "postCategory"
         }],
     },
     {
@@ -40,6 +40,12 @@ const postSchema = new mongoose.Schema(
         toJSON: { virtuals: true }
     }
 )
+
+postSchema.virtual("comments", {
+    ref: "Comment",
+    localField: "_id",
+    foreignField: "post",
+});
 
 const POST = mongoose.model("Post", postSchema)
 

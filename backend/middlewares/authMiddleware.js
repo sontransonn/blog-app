@@ -10,12 +10,22 @@ export const authGuard = async (req, res, next) => {
             req.user = await USER.findById(decoded.id).select("-password");
             next();
         } catch (error) {
-            let err = new Error("Not authorized, Token failed");
+            let err = new Error("Không được xác thực, lỗi token!");
             err.statusCode = 401;
             next(err);
         }
     } else {
-        let error = new Error("Not authorized, No token");
+        let error = new Error("Không được xác thực, không có token!");
+        error.statusCode = 401;
+        next(error);
+    }
+}
+
+export const adminGuard = (req, res, next) => {
+    if (req.user && req.user.admin) {
+        next();
+    } else {
+        let error = new Error("Không có quyền Admin!");
         error.statusCode = 401;
         next(error);
     }

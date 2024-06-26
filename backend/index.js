@@ -12,6 +12,8 @@ import {
 } from "./middlewares/errorMiddleware.js";
 
 import userRoute from "./routes/userRoute.js"
+import postRoute from "./routes/postRoute.js"
+import commentRoute from "./routes/commentRoute.js"
 
 import { connectDB } from "./services/dbService.js";
 
@@ -27,9 +29,11 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
-
 app.use("/api/user", userRoute)
+app.use("/api/post", postRoute)
+app.use("/api/comment", commentRoute)
+
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
 app.use(invalidPathHandler)
 app.use(errorResponserHandler)
