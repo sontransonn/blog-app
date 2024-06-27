@@ -1,16 +1,16 @@
 import React from 'react'
 
 import MainLayout from '../../layouts/MainLayout'
-import Hero from './hero/Hero'
-import Articles from './Articles/Articles'
-import EmailSubcription from './emailSubcription/EmailSubcription'
+import Hero from './components/Hero'
+import BlogList from './components/BlogList'
+import Subcription from './components/Subcription'
 
 const Home = () => {
     return (
         <MainLayout>
             <Hero />
-            <Articles />
-            <EmailSubcription />
+            <BlogList />
+            <Subcription />
         </MainLayout>
     )
 }

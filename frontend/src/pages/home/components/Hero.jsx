@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Search from './search/Search'
+import Search from './HeroSearchInput'
 
 import { images } from "../../../constants"
 

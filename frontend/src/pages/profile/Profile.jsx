@@ -12,7 +12,7 @@ import { toast } from "react-hot-toast";
 import { setUserInfo } from '../../redux/slices/userSlice';
 
 import MainLayout from "../../layouts/MainLayout"
-import ProfilePicture from './profilePicture/ProfilePicture';
+import ProfilePicture from './components/ProfilePicture';
 
 import { getUserProfile } from '../../apis/userApi';
 import { updateProfile } from '../../apis/userApi';

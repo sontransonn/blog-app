@@ -1,7 +1,7 @@
 import POST from "../models/postModel.js"
-import COMMENT from "../models/comment.js"
+import COMMENT from "../models/commentModel.js"
 
-export const createComment = async () => {
+export const createComment = async (req, res, next) => {
     try {
         const { desc, slug, parent, replyOnUser } = req.body;
 
@@ -12,7 +12,7 @@ export const createComment = async () => {
             return next(error);
         }
 
-        const newComment = new Comment({
+        const newComment = new COMMENT({
             user: req.user._id,
             desc,
             post: post._id,
@@ -24,7 +24,7 @@ export const createComment = async () => {
 
         return res.status(200).json(savedComment);
     } catch (error) {
-
+        next(error);
     }
 }
 

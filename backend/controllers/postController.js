@@ -1,5 +1,5 @@
 import POST from "../models/postModel.js"
-import COMMENT from "../models/comment.js"
+import COMMENT from "../models/commentModel.js"
 import { v4 as uuidv4 } from "uuid";
 import { uploadPicture } from "../configs/multerConfig.js";
 import { deleteFile } from "../utils/fileUtils.js";
@@ -123,6 +123,24 @@ export const getPost = async (req, res, next) => {
                     check: true,
                     parent: null,
                 },
+                populate: [
+                    {
+                        path: "user",
+                        select: ["avatar", "name"],
+                    },
+                    {
+                        path: "replies",
+                        match: {
+                            check: true,
+                        },
+                        populate: [
+                            {
+                                path: "user",
+                                select: ["avatar", "name"],
+                            },
+                        ],
+                    }
+                ]
             },
         ]);
 
@@ -138,5 +156,16 @@ export const getPost = async (req, res, next) => {
 }
 
 export const getAllPosts = async (req, res, next) => {
+    try {
+        const posts = await POST.find({}).populate([
+            {
+                path: "user",
+                select: ["avatar", "name", "verified"],
+            }
+        ])
 
+        res.json(posts)
+    } catch (error) {
+        next(error);
+    }
 }

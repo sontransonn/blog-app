@@ -2,7 +2,7 @@ import React from 'react'
 
 import { images } from "../../../constants"
 
-const EmailSubcription = () => {
+const Subcription = () => {
     return (
         <>
             <svg
@@ -72,4 +72,4 @@ const EmailSubcription = () => {
     )
 }
 
-export default EmailSubcription
+export default Subcription

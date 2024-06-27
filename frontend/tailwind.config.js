@@ -20,7 +20,7 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/typography")],
 
   daisyui: {
     themes: [], // true: all themes | false: only light + dark | array: specific themes like this ["light", "dark", "cupcake"]
