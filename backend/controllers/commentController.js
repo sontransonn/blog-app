@@ -28,12 +28,45 @@ export const createComment = async (req, res, next) => {
     }
 }
 
-export const deleteComment = async () => {
+export const updateComment = async (req, res, next) => {
+    try {
+        const { desc, check } = req.body;
 
+        const comment = await COMMENT.findById(req.params.commentId);
+
+        if (!comment) {
+            const error = new Error("Comment was not found");
+            return next(error);
+        }
+
+        comment.desc = desc || comment.desc;
+        comment.check = typeof check !== "undefined" ? check : comment.check;
+
+        const updatedComment = await comment.save();
+
+        return res.json(updatedComment);
+    } catch (error) {
+        next(error);
+    }
 }
 
-export const updateComment = async () => {
+export const deleteComment = async (req, res, next) => {
+    try {
+        const comment = await COMMENT.findByIdAndDelete(req.params.commentId);
 
+        await COMMENT.deleteMany({ parent: comment._id });
+
+        if (!comment) {
+            const error = new Error("Comment was not found");
+            return next(error);
+        }
+
+        return res.json({
+            message: "Comment is deleted successfully",
+        });
+    } catch (error) {
+        next(error);
+    }
 }
 
 export const getAllComments = async () => {

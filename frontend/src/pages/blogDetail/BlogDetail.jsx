@@ -4,11 +4,12 @@ import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import MainLayout from '../../layouts/MainLayout'
-import BreadCrumbs from '../../components/BreadCrumbs/BreadCrumbs'
+import BreadCrumbs from './components/BreadCrumbs'
 import SuggestedList from "./components/SuggestedList";
-import CommmentsContainer from "../../components/comments/CommmentsContainer";
+import CommentArea from "./components/CommentArea";
 import Editor from "./components/Editor";
 import BlogDetailSkeleton from "./components/BlogDetailSkeleton";
+import SocialShareButtons from "./components/SocialShareButtons";
 
 import { getAllPosts, getSinglePost } from "../../apis/postApi";
 
@@ -16,9 +17,11 @@ import { images, stables } from "../../constants"
 
 const BlogDetail = () => {
     const { slug } = useParams();
-    const userState = useSelector((state) => state.user);
+
     const [breadCrumbsData, setbreadCrumbsData] = useState([]);
     const [body, setBody] = useState(null);
+
+    const userState = useSelector((state) => state.user);
 
     const { data, isLoading, isError } = useQuery({
         queryFn: () => getSinglePost({ slug }),
@@ -32,8 +35,6 @@ const BlogDetail = () => {
             setBody(parseJsonToHtml(data?.body));
         },
     })
-
-    console.log(data);
 
     const { data: postsData } = useQuery({
         queryFn: () => getAllPosts(),
@@ -88,14 +89,29 @@ const BlogDetail = () => {
                             )}
                         </div>
 
-                        <CommmentsContainer />
+                        <CommentArea
+                            comments={data?.comments}
+                            postSlug={slug}
+                        />
                     </article>
 
                     <div>
                         <SuggestedList
                             header="Latest Article"
+                            posts={postsData?.data}
+                            tags={data?.tags}
                             className="mt-8 lg:mt-0 lg:max-w-xs"
                         />
+
+                        <div className="mt-7">
+                            <h2 className="font-roboto font-medium text-dark-hard mb-4 md:text-xl">
+                                Share on:
+                            </h2>
+                            <SocialShareButtons
+                                url={encodeURI(window.location.href)}
+                                title={encodeURIComponent(data?.title)}
+                            />
+                        </div>
                     </div>
                 </section>
             )}

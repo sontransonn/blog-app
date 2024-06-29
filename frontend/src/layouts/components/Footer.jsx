@@ -123,14 +123,6 @@ const Footer = () => {
                         </li>
                     </ul>
                 </div>
-                <div className="hidden md:flex flex-col items-center space-y-4 md:col-span-12 lg:col-span-10">
-                    <div className="bg-primary text-white p-3 rounded-full">
-                        <AiFillHeart className="w-7 h-auto" />
-                    </div>
-                    <p className="font-bold italic text-dark-light">
-                        Copyright © 2023. Crafted with love.
-                    </p>
-                </div>
             </footer>
         </section>
     );

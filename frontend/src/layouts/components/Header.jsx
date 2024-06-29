@@ -8,7 +8,7 @@ import {
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { MdKeyboardArrowDown } from "react-icons/md";
 
-import NavItem from "./navItem/NavItem";
+import HeaderNavItem from "./HeaderNavItem";
 
 import { resetUserInfo } from "../../redux/slices/userSlice";
 
@@ -17,16 +17,11 @@ import { images } from "../../constants"
 const navItemsInfo = [
     { name: "Trang chủ", type: "link", href: "/" },
     { name: "Blog", type: "link", href: "/blog" },
-    {
-        name: "Pages",
-        type: "dropdown",
-        items: [
-            { title: "About us", href: "/about" },
-            { title: "Contact us", href: "/contact" },
-        ],
-    },
-    { name: "Pricing", type: "link", href: "/pricing" },
-    { name: "Faq", type: "link", href: "/faq" },
+    { name: "Chuyên mục", type: "link", href: "/blog" },
+    { name: "Giới thiệu", type: "link", href: "/blog" },
+    { name: "Tài nguyên", type: "link", href: "/blog" },
+    { name: "Liên hệ", type: "link", href: "/blog" },
+    { name: "Sự kiện", type: "link", href: "/blog" },
 ];
 
 const Header = () => {
@@ -72,7 +67,7 @@ const Header = () => {
                 >
                     <ul className="text-white items-center gap-y-5 lg:text-dark-soft flex flex-col lg:flex-row gap-x-2 font-semibold">
                         {navItemsInfo.map((item) => (
-                            <NavItem key={item.name} item={item} />
+                            <HeaderNavItem key={item.name} item={item} />
                         ))}
                     </ul>
 
@@ -84,7 +79,7 @@ const Header = () => {
                                         className="flex gap-x-1 items-center mt-5 lg:mt-0 border-2 border-blue-500 px-6 py-2 rounded-full text-blue-500 font-semibold hover:bg-blue-500 hover:text-white transition-all duration-300"
                                         onClick={() => setProfileDrowpdown(!profileDrowpdown)}
                                     >
-                                        <span>Account</span>
+                                        <span>Tài khoản</span>
                                         <MdKeyboardArrowDown />
                                     </button>
 
@@ -108,7 +103,7 @@ const Header = () => {
                                                 type="button"
                                                 className="hover:bg-dark-hard hover:text-white px-4 py-2 text-white lg:text-dark-soft"
                                             >
-                                                Profile Page
+                                                Thông tin cá nhân
                                             </button>
 
                                             <button
@@ -116,7 +111,7 @@ const Header = () => {
                                                 type="button"
                                                 className="hover:bg-dark-hard hover:text-white px-4 py-2 text-white lg:text-dark-soft"
                                             >
-                                                Logout
+                                                Đăng xuất
                                             </button>
                                         </ul>
                                     </div>
@@ -125,7 +120,7 @@ const Header = () => {
                         </div>
                     ) : (
                         <button
-                            onClick={() => navigate("/login")}
+                            onClick={() => navigate("/auth")}
                             className="mt-5 lg:mt-0 border-2 border-blue-500 px-6 py-2 rounded-full text-blue-500 font-semibold hover:bg-blue-500 hover:text-white transition-all duration-300"
                         >
                             Đăng nhập

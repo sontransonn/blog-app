@@ -6,7 +6,7 @@ import { toast } from "react-hot-toast";
 import { FaArrowRight } from "react-icons/fa";
 
 import BlogListSkeleton from './BlogListSkeleton';
-import ArticleCard from '../../../components/ArticleCard/ArticleCard';
+import BlogCard from '../../../components/BlogCard';
 
 import { getAllPosts } from '../../../apis/postApi';
 
@@ -36,7 +36,7 @@ const BlogList = () => {
                     </div>
                 ) : (
                     data?.data.map((post) => (
-                        <ArticleCard
+                        <BlogCard
                             key={post._id}
                             post={post}
                             className="w-full md:w-[calc(50%-20px)] lg:w-[calc(33.33%-21px)]"

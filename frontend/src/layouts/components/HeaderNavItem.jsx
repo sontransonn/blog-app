@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import { MdKeyboardArrowDown } from "react-icons/md";
 
-const NavItem = ({ item }) => {
+const HeaderNavItem = ({ item }) => {
     const [dropdown, setDropdown] = useState(false);
 
     const handleToggleDropdown = () => {
@@ -52,4 +52,4 @@ const NavItem = ({ item }) => {
     )
 }
 
-export default NavItem
+export default HeaderNavItem

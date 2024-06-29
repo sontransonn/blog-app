@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'bgImg': "url('./assets/images/bgImg.jpg')",
+      },
       colors: {
         primary: "#1565D8",
         dark: {
